@@ -45,7 +45,7 @@
     background:var(--page);
     min-height:100vh;
     position:relative;
-    padding-bottom:76px;
+    padding-bottom:92px;
     background-image: repeating-linear-gradient(
       to bottom,
       transparent,
@@ -90,20 +90,6 @@
     padding:4px 8px;
     border-radius:3px;
     border:1px solid rgba(243,233,220,0.35);
-  }
-  .cover-gear-btn{
-    background:rgba(0,0,0,0.18);
-    border:1px solid rgba(243,233,220,0.35);
-    color:#F3E9DC;
-    border-radius:3px;
-    width:26px;
-    height:26px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    cursor:pointer;
-    padding:0;
   }
 
   .section{ padding:16px 16px 4px; }
@@ -315,28 +301,41 @@
     bottom:0; left:50%; transform:translateX(-50%);
     width:100%; max-width:480px;
     display:flex;
-    justify-content:center;
+    justify-content:space-evenly;
+    align-items:stretch;
     background:var(--cover-dark);
     border-top:3px solid var(--gold);
-    padding:9px 0 8px;
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    z-index:40;
   }
   .home-bar-btn{
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:2px;
+    justify-content:center;
+    gap:3px;
     color:#E8DCC9;
-    font-size:11px;
+    font-size:12px;
     font-weight:600;
     cursor:pointer;
     background:none;
     border:none;
+    border-radius:10px;
     font-family:'Inter',sans-serif;
+    flex:1 1 0;
+    max-width:180px;
+    min-height:52px;
+    padding:6px 4px;
+    -webkit-tap-highlight-color: rgba(243,233,220,0.25);
   }
-  .home-bar-btn .tab-icon{ font-size:19px; display:block; }
+  .home-bar-btn.active{
+    color:#FAF5EA;
+    background:rgba(243,233,220,0.14);
+  }
+  .home-bar-btn .tab-icon{ font-size:24px; display:block; line-height:1; }
 
   .save-toast{
-    position:fixed; bottom:82px; left:50%; transform:translateX(-50%);
+    position:fixed; bottom:96px; left:50%; transform:translateX(-50%);
     background:var(--ink); color:#fff; padding:7px 14px; border-radius:16px;
     font-size:12px; opacity:0; pointer-events:none; transition:opacity 0.25s;
     max-width:440px; z-index:50;
@@ -2921,16 +2920,17 @@
         <div class="cover-sub">Household vendor &amp; staff ledger</div>
         <div class="cover-topright">
           <div class="cover-date">${todayLabel}</div>
-          <button type="button" class="cover-gear-btn" title="Settings" onclick="gharSetTab('settings')">⚙</button>
         </div>
       </div>
       ${body}
-      ${activeTab !== 'home' ? `
       <div class="home-bar">
-        <button type="button" class="home-bar-btn" onclick="gharSetTab('home')">
+        <button type="button" class="home-bar-btn${activeTab === 'home' ? ' active' : ''}" onclick="gharSetTab('home')">
           <span class="tab-icon">🏠</span>Home
         </button>
-      </div>` : ''}
+        <button type="button" class="home-bar-btn${activeTab === 'settings' ? ' active' : ''}" onclick="gharSetTab('settings')">
+          <span class="tab-icon">⚙️</span>Settings
+        </button>
+      </div>
     `;
   }
 
@@ -4261,8 +4261,6 @@
 })();
 </script>
 <script>
-  // ---- Offline support: register the service worker so the app keeps working
-  // with no network connection once it's been opened at least once.
   if('serviceWorker' in navigator){
     window.addEventListener('load', function(){
       navigator.serviceWorker.register('sw.js').catch(function(e){
